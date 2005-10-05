@@ -1,0 +1,7 @@
+package @package@;
+
+import org.intellij.plugins.config.PluginVersion;
+
+public class Version implements PluginVersion {
+	public String getVersion() { return "@version@"; }
+}
