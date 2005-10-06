@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE idea-plugin-registry PUBLIC "-//IntelliJ Technology Network//DTD Plugin Manager 0.1//EN" "http://www.intellij.org/twiki/pub/Main/PluginManager/idea-plugin-registry.dtd">
+
+<idea-plugin-registry>
+    <idea-plugin>
+        <name>ClearcasePlugin for IDEA 4.1</name>
+        <description>plugin to integrate ClearCase with IDEA</description>
+        <version>1.32</version>
+        <vendor>@PLUGIN.VENDOR@</vendor>
+        <idea-version min="4.1" max="4.1"/>
+        <docUrl>http://www.intellij.org/twiki/bin/view/Main/ClearcasePlugin</docUrl>
+        <binUrl>http://www.intellij.org/twiki/pub/Main/ClearcasePlugin/ClearcasePlugin.zip</binUrl>
+        <srcUrl>http://www.intellij.org/twiki/pub/Main/ClearcasePlugin/ClearcasePlugin-src.zip</srcUrl>
+        <lastModified year="2004" month="06" day="06"/>
+    </idea-plugin>
+</idea-plugin-registry>
+
