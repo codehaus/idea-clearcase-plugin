@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="idea-clearcase-plugin" default="build" basedir=".">
+  <!-- Load properties from a local properties file first -->
+  <property name="build.local.properties"   value="build.local.properties"/>
+  <property file="${build.local.properties}"/>
+
+  <property name="idea.home" location="c:/Intellij-IDEA-5.0"/>
+
+  <property name="retroweaver.home" location="tools/retroweaver-1.1"/>
+
+  <property name="build.home"    value="build"/>
+
+  <property name="build.classes" value="classes"/>
+  <property name="build.dist"    value="${build.home}/dist"/>
+  <property name="build.jar"     value="${build.home}/jar"/>
+
+  <path id="compile.classpath">
+    <pathelement path="${build.classes}"/>
+    <fileset dir="lib"              includes="*.jar"/>
+    <fileset dir="${idea.home}/lib" includes="*.jar"/>
+  </path>
+
+  <taskdef name="retroweaver" classname="com.rc.retroweaver.ant.RetroWeaverTask">
+    <classpath>
+      <pathelement location="${retroweaver.home}/release/retroweaver-ex.jar"/>
+    </classpath>
+  </taskdef>
+
+
+  <target name="check-dependencies">
+    <available property="idea.exists" file="${idea.home}"/>
+    <fail unless="idea.exists"
+          message="idea.home must point to IDEA's installation directory. Currently: ${idea.home}. Configure using build.local.properties"/>
+  </target>
+
+  <target name="clean" description="Clean everything build-related">
+    <delete includeemptydirs="true" failonerror="false">
+      <fileset dir="${build.classes}"/>
+      <fileset dir="${build.home}"/>
+    </delete>
+  </target>
+
+  <target name="build" description="Build all classes" depends="check-dependencies">
+    <mkdir dir="${build.classes}"/>
+
+    <echo level="info" message="Compiling..."/>
+    <javac destdir="${build.classes}" source="1.5" debug="on">
+      <src path="src"/>
+      <classpath refid="compile.classpath"/>
+    </javac>
+
+    <echo level="info" message="Weaving..."/>
+    <retroweaver srcdir="${build.classes}" version="1.4" lazy="true"/>
+  </target>
+
+  <target name="create-jar" depends="build">
+    <mkdir dir="${build.jar}"/>
+    <jar file="${build.jar}/ClearcasePlugin.jar" basedir="${build.classes}"/>
+  </target>
+
+  <target name="dist"
+          description="Build full plugin distribution"
+          depends="build, create-jar">
+
+    <mkdir dir="${build.dist}"/>
+    <zip destfile="${build.dist}/ClearcasePlugin.zip">
+      <zipfileset dir="lib"          includes="*.jar, *.dll" prefix="ClearcasePlugin/lib"/>
+      <zipfileset dir="${build.jar}" includes="*.jar"        prefix="ClearcasePlugin/lib"/>
+    </zip>
+  </target>
+</project>

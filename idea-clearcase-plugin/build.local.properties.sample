@@ -1,0 +1,6 @@
+# To configure specific properties for the build, rename this 
+# file to: build.local.properties
+# and add all properties you need. They will override the
+# defaults that are in the build.xml.
+
+idea.home=c:/Program Files/Intellij-IDEA-5.0
