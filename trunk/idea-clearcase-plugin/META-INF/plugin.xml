@@ -5,7 +5,10 @@
    <vendor email="bibou644-jetbrains@yahoo.com">Jacques Morel</vendor>
    <idea-version since-build="3431"/>
    <change-notes>
-      <![CDATA[=== 1.36.0, 2005.08.22 by Vince Mallet<br>
+      <![CDATA[=== 1.37.0, 2005.08.22 by Wes Williams<br>
+                  * Fixed ctrl-k checkin not saving scr to file<br>
+                  * Fixed issue loosing scr file path on exit<br>
+               === 1.36.0, 2005.08.22 by Vince Mallet<br>
                   * New context menu item: Compare with Previous Version<br>
                   * Upgraded NewNativeClearcase implementation to eclipsecase 1.03<br>
                === 1.35.0, 2005.08.12 by Vince Mallet<br>
