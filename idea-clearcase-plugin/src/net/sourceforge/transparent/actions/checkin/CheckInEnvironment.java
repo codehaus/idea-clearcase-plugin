@@ -16,6 +16,7 @@ import com.intellij.openapi.vcs.checkin.RevisionsFactory;
 import com.intellij.openapi.vcs.ui.Refreshable;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.openapi.vcs.versions.AbstractRevisions;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.ui.ColumnInfo;
 import net.sourceforge.transparent.TransparentVcs;
 import org.intellij.plugins.ExcludedFileFilter;
@@ -26,6 +27,7 @@ import java.util.List;
 public class CheckInEnvironment
         implements CheckinEnvironment {
 
+    public static final Logger LOG = Logger.getInstance("net.sourceforge.transparent.ClearCase");
     private CheckInConfig configuration;
     private CheckinEnvironment lvcsCheckinEnvironment;
     private CheckInOptionsPanel optionsPanel;
@@ -67,6 +69,7 @@ public class CheckInEnvironment
 
     public List<VcsException> commit(CheckinProjectDialogImplementer dialog, Project project) {
         String checkinComment = dialog.getPreparedComment(this);
+        writeScr();
 
         List<VcsException> exceptions =
                 AbstractVcsHelper.getInstance(project).doCheckinProject(
@@ -75,6 +78,19 @@ public class CheckInEnvironment
                         transparentVcs);
 
         return exceptions;
+    }
+
+    private void writeScr()
+    {
+        try
+        {
+            configuration.lastScr = optionsPanel.getScr();
+            configuration.writeScr();
+        }
+        catch (Exception e)
+        {
+            LOG.error("Unable to write scr file", e);
+        }
     }
 
     public List<VcsException> commit(FilePath[] roots, Project project,
