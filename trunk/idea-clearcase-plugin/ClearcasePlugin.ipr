@@ -13,8 +13,37 @@
     </buildFile>
   </component>
   <component name="CodeStyleSettingsManager">
-    <option name="PER_PROJECT_SETTINGS" />
-    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
+    <option name="PER_PROJECT_SETTINGS">
+      <value>
+        <option name="JAVA_INDENT_OPTIONS">
+          <value>
+            <option name="INDENT_SIZE" value="4" />
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+            <option name="TAB_SIZE" value="4" />
+            <option name="USE_TAB_CHARACTER" value="false" />
+            <option name="SMART_TABS" value="false" />
+            <option name="LABEL_INDENT_SIZE" value="0" />
+            <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          </value>
+        </option>
+        <option name="BRACE_STYLE" value="2" />
+        <option name="CLASS_BRACE_STYLE" value="2" />
+        <option name="METHOD_BRACE_STYLE" value="2" />
+        <option name="ELSE_ON_NEW_LINE" value="true" />
+        <option name="CATCH_ON_NEW_LINE" value="true" />
+        <option name="FINALLY_ON_NEW_LINE" value="true" />
+        <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
+        <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
+        <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
+        <option name="IF_BRACE_FORCE" value="3" />
+        <option name="DOWHILE_BRACE_FORCE" value="3" />
+        <option name="WHILE_BRACE_FORCE" value="3" />
+        <option name="FOR_BRACE_FORCE" value="3" />
+        <option name="XML_KEEP_BLANK_LINES" value="1" />
+        <option name="HTML_KEEP_BLANK_LINES" value="1" />
+      </value>
+    </option>
+    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
@@ -190,7 +219,7 @@
       <module fileurl="file://$PROJECT_DIR$/ClearcasePlugin.iml" filepath="$PROJECT_DIR$/ClearcasePlugin.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA-EAP3 1.5" />
+  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 3542" />
   <component name="RmicSettings">
     <option name="IS_EANABLED" value="false" />
     <option name="DEBUGGING_INFO" value="true" />

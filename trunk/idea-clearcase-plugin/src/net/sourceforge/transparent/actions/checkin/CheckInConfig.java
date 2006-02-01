@@ -8,27 +8,26 @@ package net.sourceforge.transparent.actions.checkin;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.util.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.jdom.Element;
 
-public class CheckInConfig
-    implements ProjectComponent {
 
-    public String lastScr;
-    public String scrTextFileName;
+public class CheckInConfig implements ProjectComponent, JDOMExternalizable {
+
+    public String lastScr = "";
+    public String scrTextFileName = "";
     private Project project;
     private String comment = "";
     private CheckInEnvironment env;
 
     public CheckInConfig(Project project) {
-        scrTextFileName = "";
         this.project = project;
-        lastScr = "";
     }
-
 
     public String getComment() {
         return comment;
@@ -107,6 +106,14 @@ public class CheckInConfig
 
     public void disposeComponent() {
     }
+
+   public void readExternal(Element element) throws InvalidDataException {
+      DefaultJDOMExternalizer.readExternal(this, element);
+   }
+
+   public void writeExternal(Element element) throws WriteExternalException {
+      DefaultJDOMExternalizer.writeExternal(this, element);
+   }
 
     public static CheckInConfig getInstance(Project project) {
         return project.getComponent(CheckInConfig.class);

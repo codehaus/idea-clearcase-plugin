@@ -1,7 +1,7 @@
 <idea-plugin url="http://www.intellij.org/twiki/bin/view/Main/ClearcasePlugin">
    <name>ClearcasePlugin</name>
    <description>Allows using ClearCase from within IDEA</description>
-   <version>1.36.0</version>
+   <version>1.37.0</version>
    <vendor email="bibou644-jetbrains@yahoo.com">Jacques Morel</vendor>
    <idea-version since-build="3431"/>
    <change-notes>

@@ -55,11 +55,12 @@ public class TransparentModificationAttemptListener
         event.consume();
     }
 
-    private void checkOutIfNecessary(VirtualFile[] files) {
-        for (VirtualFile file : files) {
-            if (isUnderVcs(file)) { // && shouldCheckoutFile(file)) {
-                checkOutOrHijackFile(file);
-            }
+    private void checkOutIfNecessary(VirtualFile[] files)
+    {
+        for (VirtualFile file : files)
+        {
+           if (isUnderVcs(file))
+              checkOutOrHijackFile(file);
         }
     }
 

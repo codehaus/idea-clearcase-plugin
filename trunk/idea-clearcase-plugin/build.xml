@@ -10,7 +10,6 @@
   <property name="retroweaver.home" location="tools/retroweaver-1.1"/>
 
   <property name="build.home"    value="build"/>
-
   <property name="build.classes" value="classes"/>
   <property name="build.dist"    value="${build.home}/dist"/>
   <property name="build.jar"     value="${build.home}/jar"/>
@@ -35,7 +34,7 @@
   </target>
 
   <target name="clean" description="Clean everything build-related">
-    <delete includeemptydirs="true" failonerror="false">
+    <delete includeemptydirs="true" failonerror="true">
       <fileset dir="${build.classes}"/>
       <fileset dir="${build.home}"/>
     </delete>
@@ -51,11 +50,14 @@
     </javac>
 
     <echo level="info" message="Weaving..."/>
-    <retroweaver srcdir="${build.classes}" version="1.4" lazy="true"/>
+    <!--<retroweaver srcdir="${build.classes}" version="1.4" lazy="true"/>-->
   </target>
 
   <target name="create-jar" depends="build">
     <mkdir dir="${build.jar}"/>
+    <mkdir dir="${build.classes}/meta-inf"/>
+    <copyfile src="META-INF/plugin.xml" dest="${build.classes}/meta-inf/plugin.xml"/>
+
     <jar file="${build.jar}/ClearcasePlugin.jar" basedir="${build.classes}"/>
   </target>
 
@@ -65,8 +67,14 @@
 
     <mkdir dir="${build.dist}"/>
     <zip destfile="${build.dist}/ClearcasePlugin.zip">
-      <zipfileset dir="lib"          includes="*.jar, *.dll" prefix="ClearcasePlugin/lib"/>
+      <zipfileset dir="lib"          includes="*.jar, *.dll" excludes="openapi.jar, jdom.jar" prefix="ClearcasePlugin/lib"/>
       <zipfileset dir="${build.jar}" includes="*.jar"        prefix="ClearcasePlugin/lib"/>
+    </zip>
+  </target>
+
+  <target name="addDllsToPluginZip">
+    <zip destfile="ClearcasePlugin.zip" update="true">
+      <zipfileset dir="lib"          includes="*.dll" prefix="ClearcasePlugin/lib"/>
     </zip>
   </target>
 </project>
