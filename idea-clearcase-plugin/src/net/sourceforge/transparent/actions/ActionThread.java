@@ -14,8 +14,16 @@ import net.sourceforge.transparent.ClearCaseFile;
 class ActionThread extends Thread {
 
     private final VirtualFile virtualFile;
+
+    /**
+     * @label holds 
+     */
     private final ActionContext context;
     private final ClearCaseFile file;
+
+    /**
+     * @label runs 
+     */
     private AsynchronousAction asynchronousAction;
 
     public ActionThread(AsynchronousAction asynchronousAction, ClearCaseFile file, VirtualFile vFile, ActionContext context) {

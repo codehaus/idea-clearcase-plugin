@@ -53,6 +53,7 @@
       </group>
       <group id="ClearCaseFile" text="ClearCase" class="net.sourceforge.transparent.ClearCaseGroup">
          <separator/>
+          <action id="ClearCase.SelectActivity" class="net.sourceforge.transparent.actions.ActivitiesAction" text="_Select Activity" description="Select an UCM activity"/>
          <action id="ClearCase.Checkin" class="net.sourceforge.transparent.actions.checkin.CheckInFileAction" text="Check In" description="Check in to external VCS"/>
          <action id="ClearCase.CheckOutOrHijack" class="net.sourceforge.transparent.actions.CheckOutOrHijackAction" text="_Check Out" description="Check out file"/>
          <action id="ClearCase.UndoCheckOut" class="net.sourceforge.transparent.actions.UndoCheckOutAction" text="_Undo Check Out" description="Revert back to the previous version"/>

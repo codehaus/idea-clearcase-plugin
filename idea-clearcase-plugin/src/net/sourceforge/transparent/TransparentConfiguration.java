@@ -18,6 +18,7 @@ import org.jdom.Element;
 
 /**
  * this is the persistent state of the transparent plugin - just anything that needs to be persisted as a field
+ * @stereotype singleton
  */
 public class TransparentConfiguration implements ListenerNotifier, JDOMExternalizable, ProjectComponent {
    public String implementation = CommandLineClearCase.class.getName();
@@ -171,6 +172,7 @@ public class TransparentConfiguration implements ListenerNotifier, JDOMExternali
          CommandLineClearCase.class.getName(),
          "net.sourceforge.transparent.NativeClearCase",
          "net.sourceforge.transparent.NewNativeClearCase",
+         "net.sourceforge.transparent.NewDummyClearCase",
          TestClearCase.class.getName()
       };
       return implementations;

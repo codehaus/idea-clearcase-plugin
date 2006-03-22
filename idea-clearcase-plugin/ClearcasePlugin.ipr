@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="4" relativePaths="false">
+<project version="4" relativePaths="true">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
@@ -26,15 +26,10 @@
             <option name="LABEL_INDENT_ABSOLUTE" value="false" />
           </value>
         </option>
-        <option name="BRACE_STYLE" value="2" />
-        <option name="CLASS_BRACE_STYLE" value="2" />
-        <option name="METHOD_BRACE_STYLE" value="2" />
-        <option name="ELSE_ON_NEW_LINE" value="true" />
-        <option name="CATCH_ON_NEW_LINE" value="true" />
-        <option name="FINALLY_ON_NEW_LINE" value="true" />
         <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
         <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
         <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
+        <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
         <option name="IF_BRACE_FORCE" value="3" />
         <option name="DOWHILE_BRACE_FORCE" value="3" />
         <option name="WHILE_BRACE_FORCE" value="3" />

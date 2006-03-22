@@ -39,9 +39,27 @@ public class TransparentVcs
     public static final Logger LOG = LogUtil.getLogger();
     public static final String TEMPORARY_FILE_SUFFIX = ".deleteAndAdd";
 
+    /**
+     * @label delegates to
+     * @supplierCardinality 1 
+     */
     private ClearCase clearcase;
+
+    /**
+     * @supplierCardinality 1
+     * @label configurates from 
+     */
     private TransparentConfiguration transparentConfig;
+
+    /**
+     * @supplierCardinality 1
+     * @label configurates checkin from 
+     */
     private CheckInConfig checkInConfiguration;
+
+    /**
+     * @label configurates exclusions from 
+     */
     private ExcludedPathsFromVcsConfiguration excludedPathsConfiguration;
     private ExcludedFileFilter fileFilter = new ExcludedFileFilter();
     private ExcludedFilesListener excludedFilesListener;

@@ -54,7 +54,7 @@ public abstract class SynchronousAction extends FileAction {
         return exceptions;
     }
 
-    protected void execute(List exceptions, ActionContext context) {
+    protected void execute(List<VcsException> exceptions, ActionContext context) {
         for (VirtualFile file : context.files) {
             execute(file, context, exceptions);
         }
@@ -62,7 +62,7 @@ public abstract class SynchronousAction extends FileAction {
         resetTransactionIndicators(context);
     }
 
-    private void execute(VirtualFile file, ActionContext context, List exceptions) {
+    private void execute(VirtualFile file, ActionContext context, List<VcsException> exceptions) {
         if (isCancelled) {
             return;
         }
@@ -81,7 +81,7 @@ public abstract class SynchronousAction extends FileAction {
         handleRecursiveExecute(file, context, exceptions);
     }
 
-    private void handleRecursiveExecute(VirtualFile file, ActionContext context, List exceptions) {
+    private void handleRecursiveExecute(VirtualFile file, ActionContext context, List<VcsException> exceptions) {
         if (isCancelled) {
             return;
         }
@@ -93,11 +93,8 @@ public abstract class SynchronousAction extends FileAction {
     }
 
     private void performAndRefreshStatus(VirtualFile file, ActionContext context) throws VcsException {
-        if (!isEnabled(file, context)) {
-            return;
-        } else {
+        if (isEnabled(file, context)) {
             perform(file, context);
-            return;
         }
     }
 

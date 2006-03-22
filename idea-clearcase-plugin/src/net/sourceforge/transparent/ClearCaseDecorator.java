@@ -9,6 +9,9 @@ public class ClearCaseDecorator
 
     public static final Logger LOG = Logger.getInstance("net.sourceforge.transparent.ClearCase");
 
+    /**
+     * @label decorates 
+     */
     private ClearCase clearCase;
 
 
