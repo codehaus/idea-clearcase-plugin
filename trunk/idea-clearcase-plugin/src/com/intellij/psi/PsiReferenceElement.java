@@ -6,7 +6,7 @@
 package com.intellij.psi;
 
 
-public class PsiReferenceElement {
+public class  PsiReferenceElement {
 
     public PsiReferenceElement() {
     }

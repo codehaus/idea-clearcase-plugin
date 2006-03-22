@@ -14,7 +14,7 @@ import java.io.File;
 public class AbstractClearCase
     implements ClearCase {
 
-    private IClearcase cc;
+    protected IClearcase cc;
 
     public AbstractClearCase(int type) throws ClearcaseException {
         cc = ClearcaseFactory.getInstance().createInstance(type);

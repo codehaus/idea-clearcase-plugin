@@ -16,7 +16,9 @@ import java.io.Writer;
 
 import org.jdom.Element;
 
-
+/**
+ * @stereotype singleton 
+ */
 public class CheckInConfig implements ProjectComponent, JDOMExternalizable {
 
     public String lastScr = "";

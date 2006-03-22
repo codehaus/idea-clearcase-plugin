@@ -17,7 +17,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import net.sourceforge.transparent.actions.checkin.CheckInConfig;
@@ -166,8 +165,8 @@ public class TransparentConfigurable
     protected JComboBox createImplementationComboBox() {
         JComboBox clearcaseImpl = new JComboBox();
         String implementations[] = transparentConfig.getAvailableImplementations();
-        for (int i = 0; i < implementations.length; i++) {
-            clearcaseImpl.addItem(implementations[i]);
+        for (String implementation : implementations) {
+            clearcaseImpl.addItem(implementation);
         }
 
         final ListCellRenderer _oldRenderer = clearcaseImpl.getRenderer();
@@ -255,13 +254,7 @@ public class TransparentConfigurable
     private boolean hasImplementationChanged() {
         return transparentConfig.implementation == null || !transparentConfig.implementation.equals(clearcaseImpl.getSelectedItem());
     }
-
-    private void debug(String message) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(message);
-        }
-    }
-
+    
     protected void setClearcaseImpl(JComboBox clearcaseImpl) {
         this.clearcaseImpl = clearcaseImpl;
     }

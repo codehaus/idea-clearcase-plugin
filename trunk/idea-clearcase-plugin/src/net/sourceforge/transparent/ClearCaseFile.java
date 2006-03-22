@@ -8,15 +8,29 @@ package net.sourceforge.transparent;
 import java.io.File;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.diagnostic.Logger;
+import org.intellij.plugins.util.LogUtil;
 
 // Referenced classes of package net.sourceforge.transparent:
 //            ClearCaseException, Status, ClearCase
 
 public class ClearCaseFile {
 
+    public static final Logger LOG = LogUtil.getLogger(ClearCaseFile.class);
+    /**
+     * @label delegates to
+     */
     private ClearCase _clearCase;
     private File _file;
+
+    /**
+     * @label is in state
+     */
     private Status _status;
+
+    /**
+     * @label parent
+     */
     private ClearCaseFile _parent;
 
     public ClearCaseFile(File file, ClearCase clearCase) {
@@ -222,6 +236,7 @@ public class ClearCaseFile {
 
     private void ensureParentIsElement(String comment) {
         if (!getParent().isElement()) {
+            LOG.info("Trying to add parent : " + getParent());
             getParent().add(comment, false);
         }
         if (!getParent().isElement()) {
