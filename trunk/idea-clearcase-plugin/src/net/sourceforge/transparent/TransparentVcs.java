@@ -28,37 +28,37 @@ import java.io.File;
 import java.util.Collections;
 
 public class TransparentVcs
-        extends AbstractVcs
-        implements ProjectComponent,
-                   FileRenameProvider,
-                   FileMoveProvider,
-                   DirectoryRenameProvider,
-                   DirectoryMoveProvider,
-                   TransactionProvider {
+    extends AbstractVcs
+    implements ProjectComponent,
+    FileRenameProvider,
+    FileMoveProvider,
+    DirectoryRenameProvider,
+    DirectoryMoveProvider,
+    TransactionProvider {
 
     public static final Logger LOG = LogUtil.getLogger();
     public static final String TEMPORARY_FILE_SUFFIX = ".deleteAndAdd";
 
     /**
      * @label delegates to
-     * @supplierCardinality 1 
+     * @supplierCardinality 1
      */
     private ClearCase clearcase;
 
     /**
      * @supplierCardinality 1
-     * @label configurates from 
+     * @label configurates from
      */
     private TransparentConfiguration transparentConfig;
 
     /**
      * @supplierCardinality 1
-     * @label configurates checkin from 
+     * @label configurates checkin from
      */
     private CheckInConfig checkInConfiguration;
 
     /**
-     * @label configurates exclusions from 
+     * @label configurates exclusions from
      */
     private ExcludedPathsFromVcsConfiguration excludedPathsConfiguration;
     private ExcludedFileFilter fileFilter = new ExcludedFileFilter();
@@ -161,17 +161,17 @@ public class TransparentVcs
 
     private void resetClearCaseFromConfiguration() {
         if (clearcase == null
-                || !getTransparentConfig().implementation.equals(clearcase.getName())) {
+            || !getTransparentConfig().implementation.equals(clearcase.getName())) {
             try {
                 debug("Changing Clearcase interface to " + getTransparentConfig().implementation);
                 clearcase = new ClearCaseDecorator((ClearCase) Class.forName(getTransparentConfig().implementation).newInstance());
             } catch (Throwable e) {
                 Messages.showMessageDialog(WindowManager.getInstance().suggestParentWindow(getProject()),
-                                           e.getMessage() + "\nSelecting CommandLineImplementation instead",
-                                           "Error while selecting " +
-                                           getTransparentConfig().implementation +
-                                           "implementation",
-                                           Messages.getErrorIcon());
+                    e.getMessage() + "\nSelecting CommandLineImplementation instead",
+                    "Error while selecting " +
+                        getTransparentConfig().implementation +
+                        "implementation",
+                    Messages.getErrorIcon());
                 getTransparentConfig().implementation = CommandLineClearCase.class.getName();
                 clearcase = new ClearCaseDecorator(new CommandLineClearCase());
             }
@@ -269,7 +269,7 @@ public class TransparentVcs
     }
 
     public void checkinFile(String path, Object parameters)
-            throws VcsException {
+        throws VcsException {
         debug("enter: checkinFile(" + path + ")");
         if (!fileFilter.accept(path)) {
             return;
@@ -292,7 +292,7 @@ public class TransparentVcs
     }
 
     public boolean checkoutFile(String path, boolean keepHijacked)
-            throws VcsException {
+        throws VcsException {
         debug("enter: checkoutFile(" + path + ")");
 
         if (!fileFilter.accept(path)) {
@@ -300,12 +300,17 @@ public class TransparentVcs
         }
 
         String comment = "";
+        boolean latestVersion = getClearCase().isLatestVersion(new File(path));
+        if (! latestVersion) {
+            Messages.showWarningDialog(getProject(), "You're trying to checkout a version that is not the latest version on this branch", "Confirm checkout");
+        }
+
         if (isCheckoutToPromptForComment()) {
             CheckoutDialog dialog = new CheckoutDialog(getProject(),
-                                                       getTransparentConfig(),
-                                                       getConfiguration(),
-                                                       getVirtualFile(path),
-                                                       getCheckinEnvironment());
+                getTransparentConfig(),
+                getConfiguration(),
+                getVirtualFile(path),
+                getCheckinEnvironment());
             dialog.show();
             if (dialog.getExitCode() == CheckoutDialog.CANCEL_EXIT_CODE) {
                 return false;
@@ -356,7 +361,7 @@ public class TransparentVcs
     }
 
     public void addFile(String parentPath, String fileName, Object parameters)
-            throws VcsException {
+        throws VcsException {
         debug("enter: addFile(" + parentPath + "," + fileName + ")");
 
         if (!fileFilter.accept(parentPath + File.separator + fileName)) {
@@ -372,7 +377,7 @@ public class TransparentVcs
     }
 
     public void removeFile(String path, final Object parameters)
-            throws VcsException {
+        throws VcsException {
         debug("enter: removeFile(" + path + ")");
         if (!fileFilter.accept(path)) {
             return;
@@ -393,11 +398,11 @@ public class TransparentVcs
 
     public void renameAndCheckInFile(final String path, final String newName,
                                      final Object parameters)
-            throws VcsException {
+        throws VcsException {
         debug("enter: renameAndCheckInFile(" +
-              path +
-              ",\n" +
-              "                            " + newName + ")");
+            path +
+            ",\n" +
+            "                            " + newName + ")");
 
         if (!fileFilter.accept(path)) {
             return;
@@ -426,14 +431,14 @@ public class TransparentVcs
                                          String newParentPath,
                                          String newName,
                                          final Object parameters)
-            throws VcsException {
+        throws VcsException {
         debug("enter: moveRenameAndCheckInFile(" +
-              filePath +
-              ",\n" +
-              "                                " +
-              newParentPath +
-              ",\n" +
-              "                                " + newName + ")");
+            filePath +
+            ",\n" +
+            "                                " +
+            newParentPath +
+            ",\n" +
+            "                                " + newName + ")");
 
         if (!fileFilter.accept(filePath)) {
             return;
@@ -480,11 +485,11 @@ public class TransparentVcs
         } finally {
             if (!tmpFile.renameTo(file)) {
                 throw new ClearCaseException("The file '" +
-                                             file.getAbsolutePath() +
-                                             "' has been deleted then re-added\n" +
-                                             "Check if there is a file '" +
-                                             tmpFile.getAbsolutePath() +
-                                             "' and rename it back manually");
+                    file.getAbsolutePath() +
+                    "' has been deleted then re-added\n" +
+                    "Check if there is a file '" +
+                    tmpFile.getAbsolutePath() +
+                    "' and rename it back manually");
             }
         }
     }
@@ -493,9 +498,9 @@ public class TransparentVcs
         if (!newFile.getParentFile().exists()) {
             if (!newFile.getParentFile().mkdirs()) {
                 throw new ClearCaseException("Could not create dir " +
-                                             newFile.getParentFile().getAbsolutePath() +
-                                             "\n" +
-                                             "to move " + fileToRename.getAbsolutePath() + " into");
+                    newFile.getParentFile().getAbsolutePath() +
+                    "\n" +
+                    "to move " + fileToRename.getAbsolutePath() + " into");
             }
         }
         if (!fileToRename.renameTo(newFile)) {
@@ -515,36 +520,36 @@ public class TransparentVcs
     }
 
     public void addDirectory(String parentPath, String name, Object parameters)
-            throws VcsException {
+        throws VcsException {
         debug("enter: addDirectory(" +
-              parentPath +
-              ",\n" +
-              "                    " + name + ")");
+            parentPath +
+            ",\n" +
+            "                    " + name + ")");
         addFile(parentPath, name, parameters);
     }
 
     public void removeDirectory(String path, Object parameters)
-            throws VcsException {
+        throws VcsException {
         removeFile(path, parameters);
     }
 
     public void renameDirectory(String path, String newName, Object parameters)
-            throws VcsException {
+        throws VcsException {
         renameAndCheckInFile(path, newName, parameters);
     }
 
     public void moveAndRenameDirectory(String path, String newParentPath,
                                        String name, Object parameters)
-            throws VcsException {
+        throws VcsException {
         moveRenameAndCheckInFile(path, newParentPath, name, parameters);
     }
 
     public void moveDirectory(String path, String newParentPath,
                               Object parameters) throws VcsException {
         debug("enter: moveDirectory(" +
-              path +
-              ",\n" +
-              "                     " + newParentPath + ")");
+            path +
+            ",\n" +
+            "                     " + newParentPath + ")");
         moveRenameAndCheckInFile(path, newParentPath, getFile(path).getName(), parameters);
     }
 
@@ -610,7 +615,6 @@ public class TransparentVcs
     public Status getFileStatus(VirtualFile file) {
         return getClearCase().getStatus(new File(file.getPresentableUrl()));
     }
-
 
     public EditFileProvider getEditFileProvider() {
         return modificationAttemptListener;

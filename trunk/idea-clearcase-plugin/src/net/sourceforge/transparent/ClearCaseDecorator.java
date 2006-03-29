@@ -103,6 +103,12 @@ public class ClearCaseDecorator
         return comment;
     }
 
+    public boolean isLatestVersion(File file) {
+        boolean latest = clearCase.isLatestVersion(file);
+        debug("isLatestVersion of " + file + "=" + latest);
+        return latest;
+    }
+
     public static void debug(String message) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(message);

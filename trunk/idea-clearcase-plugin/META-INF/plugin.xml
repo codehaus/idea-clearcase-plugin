@@ -1,11 +1,13 @@
 <idea-plugin url="http://www.intellij.org/twiki/bin/view/Main/ClearcasePlugin">
    <name>ClearcasePlugin</name>
    <description>Allows using ClearCase from within IDEA</description>
-   <version>1.37.0</version>
-   <vendor email="bibou644-jetbrains@yahoo.com">Jacques Morel</vendor>
+   <version>1.38.0alpha</version>
+   <vendor>http://jira.codehaus.org/browse/IDEACLEARCASE</vendor>
    <idea-version since-build="3431"/>
    <change-notes>
-      <![CDATA[=== 1.37.0, 2005.08.22 by Wes Williams<br>
+      <![CDATA[=== 1.38.0alpha, 2006.06.22 by Gilles Philippart<br>
+                  * Added preliminary support for activities<br>
+                  === 1.37.0, 2005.08.22 by Wes Williams<br>
                   * Fixed ctrl-k checkin not saving scr to file<br>
                   * Fixed issue loosing scr file path on exit<br>
                === 1.36.0, 2005.08.22 by Vince Mallet<br>

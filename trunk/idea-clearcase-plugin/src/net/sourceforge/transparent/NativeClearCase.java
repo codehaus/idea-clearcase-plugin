@@ -13,7 +13,6 @@ import java.io.File;
 public class NativeClearCase
     implements ClearCase {
 
-
     public String getName() {
         return NativeClearCase.class.getName();
     }
@@ -67,10 +66,10 @@ public class NativeClearCase
         finally {
             if (!FileUtil.moveDirWithContent(tmpDir, dir)) {
                 throw new ClearCaseException(
-                        "Could not move back the content of " + dir.getPath()
-                                + " as part of adding it to Clearcase:\n"
-                                + "Its old content is in " + tmpDir.getName()
-                                + ". Please move it back manually");
+                    "Could not move back the content of " + dir.getPath()
+                        + " as part of adding it to Clearcase:\n"
+                        + "Its old content is in " + tmpDir.getName()
+                        + ". Please move it back manually");
             }
         }
     }
@@ -126,5 +125,15 @@ public class NativeClearCase
             return "";
         }
         return status.message;
+    }
+
+    /**
+     * Don't know how to query with cleartool this information
+     *
+     * @param file
+     * @return 
+     */
+    public boolean isLatestVersion(File file) {
+        return true;
     }
 }

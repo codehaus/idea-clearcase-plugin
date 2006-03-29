@@ -11,8 +11,7 @@ import net.sourceforge.clearcase.simple.IClearcase;
 
 import java.io.File;
 
-public class AbstractClearCase
-    implements ClearCase {
+public abstract class AbstractClearCase implements ClearCase {
 
     protected IClearcase cc;
 
@@ -102,4 +101,5 @@ public class AbstractClearCase
     public String getCheckoutComment(File file) {
         return "<undefined>";
     }
+
 }

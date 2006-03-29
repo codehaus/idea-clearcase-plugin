@@ -5,13 +5,6 @@
 
 package net.sourceforge.transparent;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.Configurable;
@@ -24,6 +17,12 @@ import org.intellij.plugins.ExcludedPathsFromVcsConfiguration;
 import org.intellij.plugins.ui.pathlisteditor.PathListEditorPanel;
 import org.intellij.plugins.util.JPanelBuilder;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 // Referenced classes of package net.sourceforge.transparent:
 //            TransparentConfiguration
 
@@ -31,9 +30,11 @@ public class TransparentConfigurable
     implements ProjectComponent, Configurable {
 
     private static final Logger LOG = Logger.getInstance("net.sourceforge.transparent.TransparentConfigurable");
+
+    // GUI fields
     private JCheckBox markExternalChangesAsUpToDateCheckBox;
-    private JComponent panel;
-    private JComboBox clearcaseImpl;
+    private JComponent rootPanel;
+    private JComboBox clearcaseImplCombo;
     private JTextField root;
     private JTextField scrTextFileName;
     private JCheckBox reservedCheckout;
@@ -41,14 +42,26 @@ public class TransparentConfigurable
     private JCheckBox checkoutComment;
     private JCheckBox checkInUseHijack;
     private JCheckBox offline;
+    private JComboBox updateOnCheckoutCombo;
     private PathListEditorPanel excludePanel;
+
+    // Other fields
     private Project project;
     private CheckInConfig checkInConfig;
     private TransparentConfiguration transparentConfig;
+    public static final String NEVER_UPDATE = "Never update";
+    public static final String PROMPT_TO_UPDATE = "Prompt to update";
+    public static final String UPDATE_AUTOMATICALLY = "Update automatically";
 
     public TransparentConfigurable(Project project) {
         this.project = project;
-        init();
+        transparentConfig = TransparentConfiguration.getInstance(this.project);
+        checkInConfig = CheckInConfig.getInstance(this.project);
+        JPanelBuilder optionsBuilder = new JPanelBuilder();
+        optionsBuilder.add(createCheckboxesPanel());
+        optionsBuilder.add(createFieldsPanel());
+        optionsBuilder.add(createExcludePanel());
+        rootPanel = optionsBuilder.getPanel();
     }
 
     public void projectOpened() {
@@ -83,51 +96,40 @@ public class TransparentConfigurable
     }
 
     public JComponent createComponent() {
-        return panel;
-    }
-
-    public void init() {
-        transparentConfig = TransparentConfiguration.getInstance(project);
-        checkInConfig = CheckInConfig.getInstance(project);
-        initUI();
-    }
-
-    private void initUI() {
-        JPanelBuilder optionsBuilder = new JPanelBuilder();
-        optionsBuilder.add(createCheckboxesPanel());
-        optionsBuilder.add(createFieldsPanel());
-        optionsBuilder.add(createExcludePanel());
-        panel = optionsBuilder.getPanel();
+        return rootPanel;
     }
 
     private JPanel createCheckboxesPanel() {
-        JPanelBuilder checkboxesBuilder = new JPanelBuilder();
+        JPanelBuilder builder = new JPanelBuilder();
         offline = new JCheckBox("Work offline (hijack on edit instead of check out)");
         offline.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                resetCheckInOutCheckboxes();
+                resetCheckInOutOptions();
             }
 
         });
-        checkboxesBuilder.add(offline, new JLabel());
+        builder.add(offline, new JLabel());
         reservedCheckout = new JCheckBox("Reserved checkouts");
-        checkboxesBuilder.add(reservedCheckout, new JLabel());
+        builder.add(reservedCheckout, new JLabel());
         automaticCheckout = new JCheckBox(getAutomaticCheckoutCheckBoxLabel());
-        checkboxesBuilder.add(automaticCheckout, new JLabel());
+        builder.add(automaticCheckout, new JLabel());
         checkoutComment = new JCheckBox("Prompt for comment on checkout");
-        checkboxesBuilder.add(checkoutComment, new JLabel());
+        builder.add(checkoutComment, new JLabel());
         checkInUseHijack = new JCheckBox("Check in use hijacks (check out automatically hijacked file on check in)");
-        checkboxesBuilder.add(checkInUseHijack, new JLabel());
-        return checkboxesBuilder.getPanel();
+        builder.add(checkInUseHijack, new JLabel());
+        return builder.getPanel();
     }
 
     private String getAutomaticCheckoutCheckBoxLabel() {
         return "Automatic " + (offline.isSelected() ? "hijacks" : "checkouts") + " on edit without asking";
     }
 
-    private void resetCheckInOutCheckboxes() {
+    private void resetCheckInOutOptions() {
         boolean isOffline = offline.isSelected();
+        if (isOffline) {
+            updateOnCheckoutCombo.setSelectedItem(NEVER_UPDATE);
+        }
         reservedCheckout.setEnabled(!isOffline);
         automaticCheckout.setText(getAutomaticCheckoutCheckBoxLabel());
         checkInUseHijack.setEnabled(!isOffline);
@@ -137,14 +139,19 @@ public class TransparentConfigurable
     }
 
     private JPanel createFieldsPanel() {
-        JPanelBuilder fieldsBuilder = new JPanelBuilder();
-        clearcaseImpl = createImplementationComboBox();
-        fieldsBuilder.add(new JLabel("Implementation"), clearcaseImpl);
+        JPanelBuilder builder = new JPanelBuilder();
+        Object[] updateOnCheckoutOptions = new Object[]{
+            PROMPT_TO_UPDATE, UPDATE_AUTOMATICALLY, NEVER_UPDATE
+        };
+        updateOnCheckoutCombo = new JComboBox(updateOnCheckoutOptions);
+        builder.add(new JLabel("On checkout, if loaded version is not latest"), updateOnCheckoutCombo);
+        clearcaseImplCombo = createImplementationComboBox();
+        builder.add(new JLabel("Implementation"), clearcaseImplCombo);
         root = new JTextField();
-        fieldsBuilder.add(new JLabel("ClearCase root"), root);
+        builder.add(new JLabel("ClearCase root"), root);
         scrTextFileName = new JTextField();
-        fieldsBuilder.add(new JLabel("SCR text file"), scrTextFileName);
-        return fieldsBuilder.getPanel();
+        builder.add(new JLabel("SCR text file"), scrTextFileName);
+        return builder.getPanel();
     }
 
     private JPanel createExcludePanel() {
@@ -163,29 +170,30 @@ public class TransparentConfigurable
     }
 
     protected JComboBox createImplementationComboBox() {
-        JComboBox clearcaseImpl = new JComboBox();
+        JComboBox combo = new JComboBox();
         String implementations[] = transparentConfig.getAvailableImplementations();
         for (String implementation : implementations) {
-            clearcaseImpl.addItem(implementation);
+            combo.addItem(implementation);
         }
 
-        final ListCellRenderer _oldRenderer = clearcaseImpl.getRenderer();
-        clearcaseImpl.setRenderer(new ListCellRenderer() {
+        final ListCellRenderer _oldRenderer = combo.getRenderer();
+        combo.setRenderer(new ListCellRenderer() {
 
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String name = (String)value;
+                String name = (String) value;
                 name = name.substring(name.lastIndexOf('.') + 1);
                 return _oldRenderer.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
             }
 
         });
-        clearcaseImpl.setPreferredSize(clearcaseImpl.getPreferredSize());
-        return clearcaseImpl;
+        combo.setPreferredSize(combo.getPreferredSize());
+        return combo;
     }
 
     public void reset() {
+        System.out.println("TransparentConfigurable.reset");
         createComponent();
-        clearcaseImpl.setSelectedItem(transparentConfig.implementation);
+        clearcaseImplCombo.setSelectedItem(transparentConfig.implementation);
         if (transparentConfig.clearcaseRoot.equals("")) {
             root.setText(getClearCaseDefaultRoot());
         } else {
@@ -193,11 +201,14 @@ public class TransparentConfigurable
         }
         scrTextFileName.setText(checkInConfig.scrTextFileName);
         reservedCheckout.setSelected(transparentConfig.checkoutReserved);
+        String updateOnCheckoutOption = transparentConfig.updateOnCheckoutOption;
+        System.out.println("setSelectedItem with updateOnCheckoutOption = " + updateOnCheckoutOption);
+        updateOnCheckoutCombo.setSelectedItem(updateOnCheckoutOption);
         automaticCheckout.setSelected(transparentConfig.automaticCheckout);
         checkoutComment.setSelected(transparentConfig.checkoutComment);
         checkInUseHijack.setSelected(transparentConfig.checkInUseHijack);
         offline.setSelected(transparentConfig.offline);
-        resetCheckInOutCheckboxes();
+        resetCheckInOutOptions();
         markExternalChangesAsUpToDateCheckBox.setSelected(transparentConfig.markExternalChangeAsUpToDate);
         excludePanel.reset();
     }
@@ -213,13 +224,8 @@ public class TransparentConfigurable
     }
 
     public void apply() throws ConfigurationException {
-        applyChangesToConfiguration();
-        checkInConfig.scrTextFileName = scrTextFileName.getText();
-        excludePanel.apply();
-    }
-
-    public void applyChangesToConfiguration() {
-        transparentConfig.implementation = (String)clearcaseImpl.getSelectedItem();
+        System.out.println("TransparentConfigurable.apply");
+        transparentConfig.implementation = (String) clearcaseImplCombo.getSelectedItem();
         transparentConfig.clearcaseRoot = root.getText();
         transparentConfig.checkoutReserved = reservedCheckout.isSelected();
         transparentConfig.automaticCheckout = automaticCheckout.isSelected();
@@ -227,20 +233,26 @@ public class TransparentConfigurable
         transparentConfig.checkInUseHijack = checkInUseHijack.isSelected();
         transparentConfig.offline = offline.isSelected();
         transparentConfig.markExternalChangeAsUpToDate = markExternalChangesAsUpToDateCheckBox.isSelected();
+        String updateOnCheckoutOption = (String) updateOnCheckoutCombo.getSelectedItem();
+        System.out.println("updateOnCheckoutOption = " + updateOnCheckoutOption);
+        transparentConfig.updateOnCheckoutOption = updateOnCheckoutOption;
         transparentConfig.notifyListenersOfChange();
+        checkInConfig.scrTextFileName = scrTextFileName.getText();
+        excludePanel.apply();
     }
 
     public boolean isModified() {
         return hasImplementationChanged()
-                || hasClearcaseRootChanged()
-                || hasScrTextFileNameChanged()
-                || transparentConfig.checkoutReserved != reservedCheckout.isSelected() 
-                || transparentConfig.automaticCheckout != automaticCheckout.isSelected()
-                || transparentConfig.checkoutComment != checkoutComment.isSelected()
-                || transparentConfig.checkInUseHijack != checkInUseHijack.isSelected()
-                || transparentConfig.offline != offline.isSelected()
-                || transparentConfig.markExternalChangeAsUpToDate != markExternalChangesAsUpToDateCheckBox.isSelected()
-                || excludePanel.isModified();
+            || hasClearcaseRootChanged()
+            || hasScrTextFileNameChanged()
+            || transparentConfig.checkoutReserved != reservedCheckout.isSelected()
+            || transparentConfig.automaticCheckout != automaticCheckout.isSelected()
+            || transparentConfig.checkoutComment != checkoutComment.isSelected()
+            || transparentConfig.checkInUseHijack != checkInUseHijack.isSelected()
+            || transparentConfig.offline != offline.isSelected()
+            || ! updateOnCheckoutCombo.getSelectedItem().equals(transparentConfig.updateOnCheckoutOption)
+            || transparentConfig.markExternalChangeAsUpToDate != markExternalChangesAsUpToDateCheckBox.isSelected()
+            || excludePanel.isModified();
     }
 
     private boolean hasClearcaseRootChanged() {
@@ -252,12 +264,11 @@ public class TransparentConfigurable
     }
 
     private boolean hasImplementationChanged() {
-        return transparentConfig.implementation == null || !transparentConfig.implementation.equals(clearcaseImpl.getSelectedItem());
-    }
-    
-    protected void setClearcaseImpl(JComboBox clearcaseImpl) {
-        this.clearcaseImpl = clearcaseImpl;
+        return transparentConfig.implementation == null || !transparentConfig.implementation.equals(clearcaseImplCombo.getSelectedItem());
     }
 
+    protected void setClearcaseImplCombo(JComboBox clearcaseImplCombo) {
+        this.clearcaseImplCombo = clearcaseImplCombo;
+    }
 
 }

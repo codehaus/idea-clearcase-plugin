@@ -32,6 +32,7 @@ public class ActivitySelectionDialog extends DialogWrapper {
         this.project = project;
         this.cc = cc;
         this.viewRootPath = viewRootPath;
+        setTitle("Activity selection");
         init();
         doRefreshAction();
     }
