@@ -28,7 +28,7 @@ public class CheckOutAction
             throws VcsException {
         boolean keepHijack = false;
         Status fileStatus = context.vcs.getFileStatus(file);
-        if (fileStatus == Status.HIJACKED) {
+        if (Status.HIJACKED.equals(fileStatus)) {
             String message = "The file " + file.getPresentableUrl() + " has been hijacked. \n" +
                     "Would you like to use it as the checked-out file?\n" +
                     "  If not it will be lost."
@@ -38,7 +38,6 @@ public class CheckOutAction
         } else if (fileStatus == Status.NOT_AN_ELEMENT) {
             throw new VcsException("CheckOut : File is not an element.");
         }
-
         context.vcs.checkoutFile(file.getPath(), keepHijack);
         refreshFile(file, context);
     }
