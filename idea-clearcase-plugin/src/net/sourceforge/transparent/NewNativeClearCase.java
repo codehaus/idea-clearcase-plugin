@@ -4,7 +4,9 @@ import com.jacob.com.Variant;
 import net.sourceforge.clearcase.comapi.*;
 import net.sourceforge.clearcase.simple.ClearcaseException;
 import net.sourceforge.clearcase.simple.ClearcaseFactory;
+import net.sourceforge.clearcase.simple.IClearcase;
 
+import java.io.File;
 import java.lang.reflect.Field;
 
 public class NewNativeClearCase extends AbstractClearCase {
@@ -13,7 +15,7 @@ public class NewNativeClearCase extends AbstractClearCase {
         super(ClearcaseFactory.JNI);
     }
 
-    private Application getClearCase() {
+    protected Application getClearCase() {
         Class ccClass = cc.getClass();
         Application ccase = null;
         try {
@@ -50,6 +52,11 @@ public class NewNativeClearCase extends AbstractClearCase {
         Application ccase = getClearCase();
         ICCVersion version = ccase.getVersion(new Variant(filePath));
         return ccase.getActivityOfVersion(version);
+    }
+
+    public boolean isLatestVersion(File file) {
+        Application ccase = getClearCase();
+        return ccase.getVersion(new Variant(file.getPath())).getIsLatest();
     }
 
 }

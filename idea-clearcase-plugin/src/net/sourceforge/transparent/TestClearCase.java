@@ -133,4 +133,11 @@ public class TestClearCase
     public String getCheckoutComment(File file) {
         return null;
     }
+
+    public boolean isLatestVersion(File file) {
+        System.out.println("ClearCase.isLatestVersion(" + file.getPath() + ")");
+        return true;
+    }
+
+
 }

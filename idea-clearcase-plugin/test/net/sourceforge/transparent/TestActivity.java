@@ -12,45 +12,60 @@ import java.lang.reflect.Field;
  */
 public class TestActivity extends TestCase {
 
-    public void testActivity() {
+    private Application ccase;
+    private String user;
+    private String viewPath;
+
+    protected void setUp() throws Exception {
+        super.setUp();
         ClearcaseJNI clearcaseJNI = new ClearcaseJNI();
         Class klass = clearcaseJNI.getClass();
-        Application ccase = null;
-        try {
-            Field f = klass.getDeclaredField("ccase");
-            f.setAccessible(true); //Make the variable accessible
-            ccase = (Application) f.get(klass);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        String user = "PIM\\gphilip";
-        String viewRootPath = "C:/USERS/projects/isl_prd_2r2_lt1_intp0";
-        String file = viewRootPath + "/product/test/src/idea/product/backend/transformer/clp-toEprom-279593.xml";
-        ICCView viewRoot = ccase.getView(viewRootPath);
-        ICCActivities activities = viewRoot.getStream().getActivities();
+        Field f = klass.getDeclaredField("ccase");
+        f.setAccessible(true); //Make the variable accessible
+        ccase = (Application) f.get(klass);
+        user = "EUR\\gphilip";
+        viewPath = "C:/USERS/projects/isl_prd_2r2_lt1_intp0_snap";
+    }
+
+    public void testOldVersionCheckout() throws NoSuchFieldException, IllegalAccessException {
+        assertFalse("version is NOT latest", isLatest(viewPath + "/product/.classpath"));
+        assertTrue("version is latest", isLatest(viewPath + "/product/.project"));
+
+    }
+
+    private boolean isLatest(String file) {
+        ICCVersion version = ccase.getVersion(new Variant(file));
+        boolean latest = version.getIsLatest();
+        System.out.println("latest (" + file + ")=" + latest);
+        return latest;
+    }
+
+    public void testActivity() throws NoSuchFieldException, IllegalAccessException {
+        String file = viewPath + "/product/test/src/idea/product/backend/transformer/clp-toEprom-279593.xml";
+        ICCView view = ccase.getView(viewPath);
+        ICCStream stream = view.getStream();
+        ICCActivities activities = stream.getActivities();
         int count = activities.getCount();
-        System.out.println("Stream has = " + count + " activities");
+        System.out.println("Stream " + stream.getTitle() + " has " + count + " activities");
         for (int i = 1; i <= count; i++) {
-            ICCActivity item = activities.getItem(i);
-            String owner = item.getOwner();
-//            System.out.println("owner = " + owner);
+            ICCActivity activity = activities.getItem(i);
+            String owner = activity.getOwner();
             if (owner.equals(user)) {
-                String name = item.getName();
-                System.out.println("name = " + name);
+                String name = activity.getHeadline();
+                System.out.println("activity# " + i + " : " + name);
             }
         }
         ICCVersion version = ccase.getVersion(new Variant(file));
-        System.out.println("version = " + version);
+        System.out.println("Current version of file " + file + " : " + version.getIdentifier());
         ICCActivity activityOfVersion = ccase.getActivityOfVersion(version);
-        System.out.println("activityOfVersion = " + activityOfVersion.getName());
-        System.out.println("viewRoot.getTagName = " + viewRoot.getTagName());
+        System.out.println("Activity of this version = " + activityOfVersion.getName());
+        System.out.println("view tag name : " + view.getTagName());
         assertNotNull(version);
-        ICCView view = ccase.getView(file);
-        System.out.println("view = " + view);
-        System.out.println("view.host = " + view.getHost());
-        assertNotNull(view);
+        ICCView viewForFile = ccase.getView(file);
+        System.out.println("viewForFile : " + viewForFile);
+        System.out.println("viewForFile.host : " + viewForFile.getHost());
+        assertNotNull(viewForFile);
+
     }
 
 }

@@ -15,8 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.intellij.openapi.OpenApiFacade;
 import org.intellij.plugins.util.RegularFileFilter;
 
-import java.util.Arrays;
-
 // Referenced classes of package net.sourceforge.transparent:
 //            CheckOutHelper, TransparentVcs, TransparentConfiguration
 

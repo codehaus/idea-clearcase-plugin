@@ -20,8 +20,8 @@ public class ClearCaseFile {
     /**
      * @label delegates to
      */
-    private ClearCase _clearCase;
-    private File _file;
+    private ClearCase clearCase;
+    private File file;
 
     /**
      * @label is in state
@@ -34,8 +34,8 @@ public class ClearCaseFile {
     private ClearCaseFile _parent;
 
     public ClearCaseFile(File file, ClearCase clearCase) {
-        _clearCase = clearCase;
-        _file = file;
+        this.clearCase = clearCase;
+        this.file = file;
         updateStatus();
     }
 
@@ -48,30 +48,30 @@ public class ClearCaseFile {
     }
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public String getName() {
-        return _file.getName();
+        return file.getName();
     }
 
     public String getPath() {
-        return _file.getPath();
+        return file.getPath();
     }
 
     public ClearCaseFile getParent() {
-        if (_parent == null && _file.getParentFile() != null) {
-            _parent = new ClearCaseFile(_file.getParentFile(), _clearCase);
+        if (_parent == null && file.getParentFile() != null) {
+            _parent = new ClearCaseFile(file.getParentFile(), clearCase);
         }
         return _parent;
     }
 
     public boolean exists() {
-        return _file.exists();
+        return file.exists();
     }
 
     public String toString() {
-        return _file.getPath();
+        return file.getPath();
     }
 
     public boolean isCheckedOut() {
@@ -91,12 +91,12 @@ public class ClearCaseFile {
     }
 
     private void updateStatus() {
-        _status = _clearCase.getStatus(_file);
+        _status = clearCase.getStatus(file);
     }
 
     private void assertIsElement() {
         if (!isElement()) {
-            throw new ClearCaseException(_file.getAbsoluteFile() + " is not an element");
+            throw new ClearCaseException(file.getAbsoluteFile() + " is not an element");
         } else {
             return;
         }
@@ -105,7 +105,7 @@ public class ClearCaseFile {
     private void assertIsCheckedOut() {
         assertIsElement();
         if (!isCheckedOut()) {
-            throw new ClearCaseException(_file.getAbsoluteFile() + " is not checked out");
+            throw new ClearCaseException(file.getAbsoluteFile() + " is not checked out");
         } else {
             return;
         }
@@ -113,7 +113,7 @@ public class ClearCaseFile {
 
     public void undoCheckOut() {
         assertIsCheckedOut();
-        _clearCase.undoCheckOut(_file);
+        clearCase.undoCheckOut(file);
         updateStatus();
     }
 
@@ -128,7 +128,7 @@ public class ClearCaseFile {
         assertIsElement();
         if (isCheckedOut()) {
 //            System.out.println("ClearCaseFile: checking in, comment: " + comment);
-            _clearCase.checkIn(_file, comment);
+            clearCase.checkIn(file, comment);
             updateStatus();
         }
     }
@@ -143,13 +143,13 @@ public class ClearCaseFile {
         if (!isCheckedOut()) {
             File newFile = null;
             if (useHijacked) {
-                newFile = new File(_file.getParentFile().getAbsolutePath(), _file.getName() + ".hijacked");
-                _file.renameTo(newFile);
+                newFile = new File(file.getParentFile().getAbsolutePath(), file.getName() + ".hijacked");
+                file.renameTo(newFile);
             }
-            _clearCase.checkOut(_file, reserved, comment);
+            clearCase.checkOut(file, reserved, comment);
             if (newFile != null) {
-                _file.delete();
-                newFile.renameTo(_file);
+                file.delete();
+                newFile.renameTo(file);
             }
             updateStatus();
         }
@@ -160,16 +160,16 @@ public class ClearCaseFile {
             return;
         }
 
-        String parentComment = addToComment(comment, "Added " + _file.getName());
+        String parentComment = addToComment(comment, "Added " + file.getName());
 
         if ("".equals(comment)) {
             comment = "Initial Checkin";
         }
 
         ensureParentIsElement(comment);
-        getParent().checkOut(reserved, false, "Adding " + _file.getName());
-        _clearCase.add(_file, comment);
-        _clearCase.checkIn(_file, comment);
+        getParent().checkOut(reserved, false, "Adding " + file.getName());
+        clearCase.add(file, comment);
+        clearCase.checkIn(file, comment);
         getParent().checkIn(parentComment);
         updateStatus();
     }
@@ -182,14 +182,14 @@ public class ClearCaseFile {
             return;
         }
 
-        String deletedText = "Deleted " + _file.getName();
+        String deletedText = "Deleted " + file.getName();
         String parentComment = addToComment(comment, deletedText);
 
-        getParent().checkOut(reserved, false, "Deleting " + _file.getName());
+        getParent().checkOut(reserved, false, "Deleting " + file.getName());
         if ("".equals(comment)) {
             comment = deletedText;
         }
-        _clearCase.delete(_file, comment);
+        clearCase.delete(file, comment);
         getParent().checkIn(parentComment);
         updateStatus();
     }
@@ -214,9 +214,9 @@ public class ClearCaseFile {
         getParent().checkOut(reserved, false);
         target.getParent().checkOut(reserved, false);
         if ("".equals(comment)) {
-            comment = "Moved " + _file.getPath() + " to " + target.getFile().getPath();
+            comment = "Moved " + file.getPath() + " to " + target.getFile().getPath();
         }
-        _clearCase.move(_file, target.getFile(), comment);
+        clearCase.move(file, target.getFile(), comment);
         getParent().checkIn(comment);
         target.getParent().checkIn(comment);
         updateStatus();
@@ -227,9 +227,9 @@ public class ClearCaseFile {
         ensureParentIsElement(comment);
         getParent().checkOut(reserved, false);
         if ("".equals(comment)) {
-            comment = "Renamed " + _file.getName() + " to " + newName;
+            comment = "Renamed " + file.getName() + " to " + newName;
         }
-        _clearCase.move(_file, new File(_file.getParentFile(), newName), comment);
+        clearCase.move(file, new File(file.getParentFile(), newName), comment);
         getParent().checkIn(comment);
         updateStatus();
     }
@@ -240,7 +240,7 @@ public class ClearCaseFile {
             getParent().add(comment, false);
         }
         if (!getParent().isElement()) {
-            throw new ClearCaseException("Could not add " + _file.getAbsoluteFile());
+            throw new ClearCaseException("Could not add " + file.getAbsoluteFile());
         } else {
             return;
         }
