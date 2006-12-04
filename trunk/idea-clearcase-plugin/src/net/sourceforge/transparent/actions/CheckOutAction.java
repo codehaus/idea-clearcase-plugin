@@ -15,7 +15,7 @@ import org.intellij.plugins.util.CommandUtil;
 //            SynchronousAction, ActionContext
 
 public class CheckOutAction
-        extends SynchronousAction {
+    extends SynchronousAction {
 
     public CheckOutAction() {
     }
@@ -25,17 +25,17 @@ public class CheckOutAction
     }
 
     protected void perform(VirtualFile file, ActionContext context)
-            throws VcsException {
+        throws VcsException {
         boolean keepHijack = false;
         Status fileStatus = context.vcs.getFileStatus(file);
         if (Status.HIJACKED.equals(fileStatus)) {
             String message = "The file " + file.getPresentableUrl() + " has been hijacked. \n" +
-                    "Would you like to use it as the checked-out file?\n" +
-                    "  If not it will be lost."
-                    ;
-            int answer = Messages.showYesNoDialog(context.vcs.getProject(), message, "Checkout hijacked file", Messages.getQuestionIcon());
+                "Would you like to use it as the checked-out file?\n" +
+                "  If not it will be lost.";
+            int answer = Messages.showYesNoDialog(context.vcs.getProject(), message, "Checkout hijacked file",
+                Messages.getQuestionIcon());
             keepHijack = answer == 0;
-        } else if (fileStatus == Status.NOT_AN_ELEMENT) {
+        } else if (Status.NOT_AN_ELEMENT.equals(fileStatus)) {
             throw new VcsException("CheckOut : File is not an element.");
         }
         context.vcs.checkoutFile(file.getPath(), keepHijack);

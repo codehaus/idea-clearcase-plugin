@@ -100,10 +100,6 @@ public class NativeClearCase
         return Clearcase.isCheckedOut(file.getPath());
     }
 
-    public void cleartool(String cmd) {
-        checkStatus(Clearcase.cleartool(cmd));
-    }
-
     public CheckedOutStatus getCheckedOutStatus(File file) {
         Clearcase.Status status = Clearcase.cleartool("lscheckout -fmt %Rf -directory " + file.getPath());
         if (status == null || status.message == null) {

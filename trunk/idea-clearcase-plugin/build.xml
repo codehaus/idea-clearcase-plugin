@@ -10,7 +10,7 @@
   <property name="retroweaver.home" location="tools/retroweaver-1.1"/>
 
   <property name="build.home"    value="build"/>
-  <property name="build.classes" value="classes"/>
+  <property name="build.classes" value="ant-classes"/>
   <property name="build.dist"    value="${build.home}/dist"/>
   <property name="build.jar"     value="${build.home}/jar"/>
 
@@ -34,7 +34,7 @@
   </target>
 
   <target name="clean" description="Clean everything build-related">
-    <delete includeemptydirs="true" failonerror="true">
+    <delete includeemptydirs="true" failonerror="no">
       <fileset dir="${build.classes}"/>
       <fileset dir="${build.home}"/>
     </delete>
@@ -44,8 +44,9 @@
     <mkdir dir="${build.classes}"/>
 
     <echo level="info" message="Compiling..."/>
-    <javac destdir="${build.classes}" source="1.5" debug="on">
+    <javac destdir="${build.classes}" debug="on" source="1.5">
       <src path="src"/>
+      <src path="test"/>
       <classpath refid="compile.classpath"/>
     </javac>
 
@@ -55,15 +56,15 @@
 
   <target name="create-jar" depends="build">
     <mkdir dir="${build.jar}"/>
-    <mkdir dir="${build.classes}/meta-inf"/>
-    <copyfile src="META-INF/plugin.xml" dest="${build.classes}/meta-inf/plugin.xml"/>
+    <mkdir dir="${build.classes}/META-INF"/>
+    <copy file="META-INF/plugin.xml" tofile="${build.classes}/META-INF/plugin.xml"/>
 
-    <jar file="${build.jar}/ClearcasePlugin.jar" basedir="${build.classes}"/>
+    <jar file="${build.jar}/ClearcasePlugin.jar" basedir="${build.classes}" manifest="META-INF/MANIFEST.MF"/>
   </target>
 
   <target name="dist"
           description="Build full plugin distribution"
-          depends="build, create-jar">
+          depends="clean, build, create-jar">
 
     <mkdir dir="${build.dist}"/>
     <zip destfile="${build.dist}/ClearcasePlugin.zip">

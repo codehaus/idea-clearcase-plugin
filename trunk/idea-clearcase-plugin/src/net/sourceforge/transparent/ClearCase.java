@@ -8,7 +8,7 @@ public interface ClearCase {
 
     void checkIn(File file, String s);
 
-    void checkOut(File file, boolean flag, String comment);
+    void checkOut(File file, boolean isReserved, String comment);
 
     void undoCheckOut(File file);
 
@@ -27,19 +27,18 @@ public interface ClearCase {
     /**
      * Unused.
      *
-     * @param s
-     */
-    void cleartool(String s);
-
-    /**
-     * Unused.
-     *
      * @param file
      */
     CheckedOutStatus getCheckedOutStatus(File file);
 
     String getCheckoutComment(File file);
 
+    /**
+     * Return true if the loaded file is the last version.
+     *
+     * @param file
+     * @return true if the loaded file is the last version
+     */
     boolean isLatestVersion(File file);
 
 }

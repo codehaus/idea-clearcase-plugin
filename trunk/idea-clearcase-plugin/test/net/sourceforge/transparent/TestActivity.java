@@ -30,7 +30,14 @@ public class TestActivity extends TestCase {
     public void testOldVersionCheckout() throws NoSuchFieldException, IllegalAccessException {
         assertFalse("version is NOT latest", isLatest(viewPath + "/product/.classpath"));
         assertTrue("version is latest", isLatest(viewPath + "/product/.project"));
+    }
 
+    public void testStatus() {
+        Variant lastParam = new Variant(viewPath + "/product/test.txt");
+        ICCElement element = ccase.getElement(viewPath + "/product/test.txt");
+        System.out.println("element = " + element);
+        ICCVersion version = ccase.getVersion(lastParam);
+        System.out.println("version = " + version);
     }
 
     private boolean isLatest(String file) {

@@ -86,11 +86,6 @@ public class ClearCaseDecorator
         return clearCase.isCheckedOut(file);
     }
 
-    public void cleartool(String cmd) {
-        debug("executing cleartool " + cmd);
-        clearCase.cleartool(cmd);
-    }
-
     public CheckedOutStatus getCheckedOutStatus(File file) {
         CheckedOutStatus status = clearCase.getCheckedOutStatus(file);
         debug("getCheckedOutStatus of " + file + "=" + status);

@@ -42,6 +42,9 @@ public class TransparentConfiguration implements ListenerNotifier, JDOMExternali
     private Field markExternalChangesAsUpToDateField;
     private BaseComponent lvcsConfiguration;
     private Project project;
+    public static final String NEVER_UPDATE = "Never update";
+    public static final String PROMPT_TO_UPDATE = "Prompt to update";
+    public static final String UPDATE_AUTOMATICALLY = "Update automatically";
 
     public void readExternal(Element element) throws InvalidDataException {
         System.out.println("TransparentConfiguration.readExternal : " + this);
