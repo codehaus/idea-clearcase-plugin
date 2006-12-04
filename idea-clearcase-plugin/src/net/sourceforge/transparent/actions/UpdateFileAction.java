@@ -1,6 +1,7 @@
 package net.sourceforge.transparent.actions;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import net.sourceforge.transparent.ClearcaseUtils;
 
 public class UpdateFileAction extends AsynchronousAction {
 
@@ -13,7 +14,7 @@ public class UpdateFileAction extends AsynchronousAction {
                     + "Undo checkout before updating it" ;
 
     public void perform(VirtualFile vfile, ActionContext context) {
-        cleartool("update", "-graphical", vfile.getPath());
+        ClearcaseUtils.cleartool("update", "-graphical", vfile.getPath());
     }
 
     protected String getActionName(ActionContext context) {

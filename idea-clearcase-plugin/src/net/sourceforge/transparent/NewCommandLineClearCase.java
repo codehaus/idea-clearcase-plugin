@@ -5,6 +5,11 @@ import net.sourceforge.clearcase.simple.ClearcaseFactory;
 
 import java.io.File;
 
+/**
+ * This class is to {@link CommandLineClearCase} what {@link NewNativeClearCase} is to {@link NativeClearCase}
+ *
+ * @see NewNativeClearCase
+ */
 public class NewCommandLineClearCase extends AbstractClearCase {
 
     public NewCommandLineClearCase() throws ClearcaseException {
@@ -15,7 +20,7 @@ public class NewCommandLineClearCase extends AbstractClearCase {
      * Don't know how to query with cleartool this information
      *
      * @param file
-     * @return
+     * @return 
      */
     public boolean isLatestVersion(File file) {
         return true;

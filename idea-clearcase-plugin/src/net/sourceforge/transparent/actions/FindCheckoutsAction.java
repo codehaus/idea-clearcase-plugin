@@ -3,6 +3,7 @@ package net.sourceforge.transparent.actions;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import net.sourceforge.transparent.TransparentVcs;
+import net.sourceforge.transparent.ClearcaseUtils;
 
 public class FindCheckoutsAction extends AsynchronousAction {
 
@@ -21,7 +22,7 @@ public class FindCheckoutsAction extends AsynchronousAction {
                     "Clearcase plugin warning",
                     Messages.getWarningIcon());
         }
-        cleartool("lscheckout", "-g", getTargetPath(context.vcs, file.getPath()));
+        ClearcaseUtils.cleartool("lscheckout", "-g", getTargetPath(context.vcs, file.getPath()));
     }
 
     protected String getActionName(ActionContext context) {

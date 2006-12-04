@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class AsynchronousAction extends FileAction {
 
-    protected abstract void perform(VirtualFile virtualfile, ActionContext actioncontext) throws VcsException;
+    protected abstract void perform(VirtualFile virtualfile, ActionContext actionContext) throws VcsException;
 
     protected List<VcsException> runAction(ActionContext context) {
         VirtualFile file = context.files[0];

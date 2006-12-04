@@ -8,11 +8,7 @@ package net.sourceforge.transparent.actions;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
-import net.sourceforge.transparent.ClearCaseException;
-import net.sourceforge.transparent.Runner;
 import org.intellij.openapi.OpenApiFacade;
-
-import java.io.IOException;
 
 public abstract class FileAction extends VcsAction {
 
@@ -22,7 +18,8 @@ public abstract class FileAction extends VcsAction {
 
     public boolean isEnabled(ActionContext context) {
         if (!hasFileTarget(context)) {
-            debug("Action " + getActionName(context) + " disable: " + (context.files != null ? "0 files" : "files=null"));
+            debug(
+                "Action " + getActionName(context) + " disable: " + (context.files != null ? "0 files" : "files=null"));
             return false;
         }
         boolean enabled = false;
@@ -52,13 +49,4 @@ public abstract class FileAction extends VcsAction {
         return OpenApiFacade.getFileStatusManager(context.project).getStatus(file) != FileStatus.ADDED;
     }
 
-    public void cleartool(String... subcmd) throws ClearCaseException {
-        try {
-            (new Runner()).runAsynchronously(Runner.getCommand("cleartool", subcmd));
-        }
-        catch (IOException e) {
-            LOG.error(e);
-            throw new ClearCaseException(e.getMessage());
-        }
-    }
 }

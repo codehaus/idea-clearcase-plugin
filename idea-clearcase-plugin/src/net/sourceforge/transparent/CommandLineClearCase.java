@@ -1,18 +1,9 @@
-// Decompiled by Jad v1.5.8e. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.geocities.com/kpdus/jad.html
-// Decompiler options: packimports(3) braces fieldsfirst splitstr(nl) nonlb space 
-// Source File Name:   CommandLineClearCase.java
-
 package net.sourceforge.transparent;
 
 import com.intellij.openapi.diagnostic.Logger;
 import org.intellij.plugins.util.FileUtil;
 
 import java.io.File;
-
-// Referenced classes of package net.sourceforge.transparent:
-//            ClearCaseException, Runner, ClearCase, Status, 
-//            CheckedOutStatus
 
 public class CommandLineClearCase
     implements ClearCase {
@@ -23,19 +14,15 @@ public class CommandLineClearCase
     }
 
     public String getName() {
-        return (net.sourceforge.transparent.CommandLineClearCase.class).getName();
+        return CommandLineClearCase.class.getName();
     }
 
     public void undoCheckOut(File file) {
-        cleartool(new String[]{
-            "unco", "-rm", file.getAbsolutePath()
-        });
+        cleartool("unco", "-rm", file.getAbsolutePath());
     }
 
     public void checkIn(File file, String comment) {
-        cleartool(new String[]{
-            "ci", "-c", quote(comment), "-identical", file.getAbsolutePath()
-        });
+        cleartool("ci", "-c", quote(comment), "-identical", file.getAbsolutePath());
     }
 
     public void checkOut(File file, boolean isReserved, String comment) {
@@ -45,20 +32,14 @@ public class CommandLineClearCase
         }
 
         if (withComment) {
-            cleartool(new String[]{
-                "co", "-c", quote(comment), isReserved ? "-reserved" : "-unreserved", file.getAbsolutePath()
-            });
+            cleartool("co", "-c", quote(comment), isReserved ? "-reserved" : "-unreserved", file.getAbsolutePath());
         } else {
-            cleartool(new String[]{
-                "co", "-nc", isReserved ? "-reserved" : "-unreserved", file.getAbsolutePath()
-            });
+            cleartool("co", "-nc", isReserved ? "-reserved" : "-unreserved", file.getAbsolutePath());
         }
     }
 
     public void delete(File file, String comment) {
-        cleartool(new String[]{
-            "rmname", "-force", "-c", quote(comment), file.getAbsolutePath()
-        });
+        cleartool("rmname", "-force", "-c", quote(comment), file.getAbsolutePath());
     }
 
     public void add(File file, String comment) {
@@ -89,23 +70,19 @@ public class CommandLineClearCase
     }
 
     private void doAdd(String subcmd, String path, String comment) {
-        cleartool(new String[]{
-            subcmd, "-c", quote(comment), path
-        });
+        cleartool(subcmd, "-c", quote(comment), path);
     }
 
     public void move(File file, File target, String comment) {
-        cleartool(new String[]{
-            "mv", "-c", quote(comment), file.getAbsolutePath(), target.getAbsolutePath()
-        });
+        cleartool("mv", "-c", quote(comment), file.getAbsolutePath(), target.getAbsolutePath());
     }
 
     public boolean isElement(File file) {
-        return getStatus(file) != Status.NOT_AN_ELEMENT;
+        return !Status.NOT_AN_ELEMENT.equals(getStatus(file));
     }
 
     public boolean isCheckedOut(File file) {
-        return getStatus(file) == Status.CHECKED_OUT;
+        return Status.CHECKED_OUT.equals(getStatus(file));
     }
 
     public Status getStatus(File file) {
@@ -128,19 +105,12 @@ public class CommandLineClearCase
         }
     }
 
-    public void cleartool(String subcmd) {
-        String cmd = "cleartool " + subcmd;
-        LOG.debug(cmd);
-        Runner runner = new Runner();
-        runner.run(cmd);
+    public Runner cleartool(String... subCommands) {
+        return cleartool(subCommands, false);
     }
 
-    public void cleartool(String subcmd[]) {
-        cleartool(subcmd, false);
-    }
-
-    private Runner cleartool(String subcmd[], boolean canFail) {
-        String cmd[] = Runner.getCommand("cleartool", subcmd);
+    private Runner cleartool(String subCommands[], boolean canFail) {
+        String cmd[] = Runner.getCommand("cleartool", subCommands);
         LOG.debug(Runner.getCommandLine(cmd));
         Runner runner = new Runner();
         runner.run(cmd, canFail);
@@ -176,12 +146,17 @@ public class CommandLineClearCase
     }
 
     /**
-     * Don't know how to query with cleartool this information
+     * Return true if the loaded file is the last version.
      *
      * @param file
-     * @return
+     * @return true if the loaded file is the last version
      */
     public boolean isLatestVersion(File file) {
+        /*Runner runner = cleartool("cleartool find . -name " + file.getAbsolutePath() + " -cview  -print");
+        String output = runner.getOutput();
+        int i = output.lastIndexOf("\\");
+        String element = output.substring(0, i-1);
+        cleartool("find", "-name", file.getAbsolutePath(), "-version", "version(main\\" + element + "\\LATEST) -print");*/
         return true;
     }
 

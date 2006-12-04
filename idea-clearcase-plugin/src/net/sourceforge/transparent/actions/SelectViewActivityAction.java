@@ -11,10 +11,9 @@ import net.sourceforge.transparent.activity.ActivitySelectionDialog;
 /**
  * @author Gilles Philippart
  */
-public class ActivitiesAction extends SynchronousAction {
+public class SelectViewActivityAction extends SynchronousAction {
 
     protected void perform(VirtualFile virtualfile, ActionContext context) throws VcsException {
-        System.out.println("ActivitiesAction.perform");
         TransparentVcs vcs = context.vcs;
         ClearCase clearCase = vcs.getClearCase();
         if (clearCase instanceof ClearCaseDecorator) {
@@ -30,7 +29,7 @@ public class ActivitiesAction extends SynchronousAction {
     }
 
     protected String getActionName(ActionContext actioncontext) {
-        return "Select an activity";
+        return "Select view activity";
     }
 
     public boolean isEnabled(ActionContext context) {

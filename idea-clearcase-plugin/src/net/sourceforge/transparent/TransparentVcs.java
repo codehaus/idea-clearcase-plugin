@@ -164,7 +164,8 @@ public class TransparentVcs
             || !getTransparentConfig().implementation.equals(clearcase.getName())) {
             try {
                 debug("Changing Clearcase interface to " + getTransparentConfig().implementation);
-                clearcase = new ClearCaseDecorator((ClearCase) Class.forName(getTransparentConfig().implementation).newInstance());
+                clearcase = new ClearCaseDecorator(
+                    (ClearCase) Class.forName(getTransparentConfig().implementation).newInstance());
             } catch (Throwable e) {
                 Messages.showMessageDialog(WindowManager.getInstance().suggestParentWindow(getProject()),
                     e.getMessage() + "\nSelecting CommandLineImplementation instead",
@@ -300,26 +301,47 @@ public class TransparentVcs
         }
 
         String comment = "";
-        boolean latestVersion = getClearCase().isLatestVersion(new File(path));
-        if (! latestVersion) {
-            Messages.showWarningDialog(getProject(), "You're trying to checkout a version that is not the latest version on this branch", "Confirm checkout");
-        }
 
+        boolean latestVersion = getClearCase().isLatestVersion(new File(path));
+        String[] options = new String[]{"Yes", "No", "Cancel"};
+        String updateOnCheckoutOption = transparentConfig.updateOnCheckoutOption;
+        boolean updateBeforeCheckout = false; 
+        if (updateOnCheckoutOption.equals(TransparentConfiguration.NEVER_UPDATE)) {
+            updateBeforeCheckout = false;
+        } else if (updateOnCheckoutOption.equals(TransparentConfiguration.UPDATE_AUTOMATICALLY)) {
+            updateBeforeCheckout = true;
+        } else {
+            if (!latestVersion &&
+                updateOnCheckoutOption.equals(TransparentConfiguration.PROMPT_TO_UPDATE)) {
+                int choice = Messages.showDialog(
+                    "There is a newer version of this element on this branch, do you want to update before checking out ?",
+                    "Confirm checkout",
+                    options, 0, Messages.getInformationIcon());
+                if (choice == 2 || choice == -1) {
+                    return false; // cancel checkout
+                } else if (choice == 0) {
+                    updateBeforeCheckout = true;
+                } else if (choice == 1) {
+                    updateBeforeCheckout = false;
+                }
+            }
+        }
         if (isCheckoutToPromptForComment()) {
-            CheckoutDialog dialog = new CheckoutDialog(getProject(),
-                getTransparentConfig(),
-                getConfiguration(),
-                getVirtualFile(path),
-                getCheckinEnvironment());
+            CheckoutDialog dialog = new CheckoutDialog(getProject(), getTransparentConfig(), getConfiguration(),
+                getVirtualFile(path), getCheckinEnvironment());
             dialog.show();
             if (dialog.getExitCode() == CheckoutDialog.CANCEL_EXIT_CODE) {
-                return false;
+                return false; // cancel checkout
             }
             comment = dialog.getComment();
         }
 
         try {
             ClearCaseFile file = getFile(path);
+            if (updateBeforeCheckout) {
+                System.out.println("Updating version of " + path + " before checkout");
+                ClearcaseUtils.cleartoolSync("update", "-graphical", path);
+            }
             file.checkOut(transparentConfig.checkoutReserved, keepHijacked, comment);
             refreshIDEA(file);
             return file.isCheckedOut();
@@ -504,7 +526,8 @@ public class TransparentVcs
             }
         }
         if (!fileToRename.renameTo(newFile)) {
-            throw new ClearCaseException("Could not move " + fileToRename.getAbsolutePath() + " to " + newFile.getAbsolutePath());
+            throw new ClearCaseException(
+                "Could not move " + fileToRename.getAbsolutePath() + " to " + newFile.getAbsolutePath());
         }
     }
 

@@ -68,19 +68,27 @@ public abstract class AbstractClearCase implements ClearCase {
     }
 
     public boolean isHijacked(File file) {
-        return cc.isHijacked(file.getPath(), false); //TODO: use isSymbolicLink parameter properly
+        long t0 = System.currentTimeMillis();
+        boolean hijacked = cc.isHijacked(file.getPath(), false);
+        long t1= System.currentTimeMillis();
+        System.out.println("isHijacked executed in " + (t1 - t0) + " ms");
+        return hijacked; //TODO: use isSymbolicLink parameter properly
     }
 
     public boolean isElement(File file) {
-        return cc.isElement(file.getPath());
+        long t0 = System.currentTimeMillis();
+        boolean element = cc.isElement(file.getPath());
+        long t1 = System.currentTimeMillis();
+        System.out.println("isElement executed in " + (t1 - t0) + " ms");
+        return element;
     }
 
     public boolean isCheckedOut(File file) {
-        return cc.isCheckedOut(file.getPath(), false); //TODO: use isSymbolicLink parameter properly
-    }
-
-    public void cleartool(String cmd) {
-        checkStatus(cc.cleartool(cmd));
+        long t0 = System.currentTimeMillis();
+        boolean checkedOut = cc.isCheckedOut(file.getPath(), false);
+        long t1 = System.currentTimeMillis();
+        System.out.println("isCheckedOut executed in " + (t1 - t0) + " ms");
+        return checkedOut; //TODO: use isSymbolicLink parameter properly
     }
 
     public CheckedOutStatus getCheckedOutStatus(File file) {

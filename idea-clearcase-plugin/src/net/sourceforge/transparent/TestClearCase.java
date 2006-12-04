@@ -122,10 +122,6 @@ public class TestClearCase
         System.out.println("ClearCase.undoCheckoutFile(" + file.getPath() + ")");
     }
 
-    public void cleartool(String cmd) {
-        System.out.println("ClearCase.cleartool(" + cmd + ")");
-    }
-
     public CheckedOutStatus getCheckedOutStatus(File file) {
         return null;
     }

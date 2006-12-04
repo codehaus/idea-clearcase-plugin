@@ -4,11 +4,17 @@ import com.jacob.com.Variant;
 import net.sourceforge.clearcase.comapi.*;
 import net.sourceforge.clearcase.simple.ClearcaseException;
 import net.sourceforge.clearcase.simple.ClearcaseFactory;
-import net.sourceforge.clearcase.simple.IClearcase;
 
 import java.io.File;
 import java.lang.reflect.Field;
 
+/**
+ * This class was supposed to supercede NativeClearCase, but there are some stability problem (maybe related to JACOB).
+ *
+ * @author Jacques Morel
+ * @author Vincent Mallet
+ * @author Gilles Philippart
+ */
 public class NewNativeClearCase extends AbstractClearCase {
 
     public NewNativeClearCase() throws ClearcaseException {
@@ -56,7 +62,9 @@ public class NewNativeClearCase extends AbstractClearCase {
 
     public boolean isLatestVersion(File file) {
         Application ccase = getClearCase();
-        return ccase.getVersion(new Variant(file.getPath())).getIsLatest();
+        Variant lastParam = new Variant(file.getPath());
+        ICCVersion version = ccase.getVersion(lastParam);
+        return version.getIsLatest();
     }
 
 }
